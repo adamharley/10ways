@@ -1,0 +1,28 @@
+on:
+  push:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+env:
+  WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache known JSON
+        uses: actions/cache@v3
+        with:
+          key: known
+          path: known.json
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install
+        run: npm ci
+      - name: Scrape
+        run: node index
